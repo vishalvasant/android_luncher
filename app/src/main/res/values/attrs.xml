@@ -1,0 +1,21 @@
+<resources>
+    <declare-styleable name="FullscreenAttrs">
+        <attr name="fullscreenBackgroundColor" format="color" />
+        <attr name="fullscreenTextColor" format="color" />
+    </declare-styleable>
+    <declare-styleable name="BetterTextView">
+        <attr name="outlineSize" format="dimension"/>
+        <attr name="outlineColor" format="color|reference"/>
+        <attr name="android:shadowRadius"/>
+        <attr name="android:shadowDx"/>
+        <attr name="android:shadowDy"/>
+        <attr name="android:shadowColor"/>
+    </declare-styleable>
+    <declare-styleable name="XMBView">
+        <attr name="subItemGap" format="dimension"/>
+        <attr name="horizontalSpacing" format="dimension"/>
+        <attr name="verticalSpacing" format="dimension"/>
+        <attr name="innerHorizontalSpacing" format="dimension"/>
+        <attr name="innerVerticalSpacing" format="dimension"/>
+    </declare-styleable>
+</resources>

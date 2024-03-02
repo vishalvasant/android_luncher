@@ -1,0 +1,107 @@
+plugins {
+    id 'com.android.application'
+}
+apply plugin: 'kotlin-android'
+
+def keystoreProperties = null
+
+def keystorePropertiesFile = rootProject.file("app/keystores/keystore.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties = new Properties()
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+android {
+    if (keystoreProperties != null) {
+        signingConfigs {
+            release {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
+    }
+    compileSdkVersion 33
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        applicationId "com.OxGames.OxShell"
+        minSdkVersion 26
+        targetSdkVersion 33
+        versionCode 9
+        versionName "1.3.2"
+
+        //def documentsAuthorityValue = applicationId + ".Explorer"
+        //manifestPlaceholders = [documentsAuthority: documentsAuthorityValue]
+        //buildConfigField "String", "DOCUMENTS_AUTHORITY", "\"${documentsAuthorityValue}\""
+        def appLabelValue = "Ox Shell"
+        //buildConfigField "String", "APP_LABEL", "\"${appLabelValue}\""
+        def iconValue = "@drawable/icon_free_xhdpi"
+        def bannerValue = "@drawable/banner_free_xhdpi"
+        manifestPlaceholders = [appLabel: appLabelValue, icon: iconValue, banner: bannerValue]
+
+        buildConfigField "boolean", "GOLD", "false"
+        buildConfigField "String", "APP_LABEL", "\"{$appLabelValue}\""
+
+        //testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        if (keystoreProperties != null)
+            signingConfig signingConfigs.release
+    }
+
+    buildTypes {
+        gold {
+            //minifyEnabled true
+            buildConfigField "boolean", "GOLD", "true"
+            def iconValue = "@drawable/icon_xhdpi"
+            def bannerValue = "@drawable/banner_xhdpi"
+            manifestPlaceholders = [icon: iconValue, banner: bannerValue]
+        }
+        release {
+            //minifyEnabled true
+        }
+        release_free {
+//            signingConfig signingConfigs.release
+            //minifyEnabled true
+            applicationIdSuffix ".free"
+            //def appLabelValue = "Ox Shell Free"
+            //manifestPlaceholders = [appLabel: appLabelValue]
+        }
+        debug {
+            //minifyEnabled true
+            debuggable true
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding true
+    }
+    splits {
+        abi {
+            enable true
+            universalApk true
+        }
+    }
+    namespace 'com.OxGames.OxShell'
+}
+
+dependencies {
+    //implementation 'androidx.core:core:1.10.0'
+    implementation "androidx.media3:media3-exoplayer:1.0.1"
+    implementation "androidx.media3:media3-session:1.0.1"
+    implementation "androidx.media3:media3-ui:1.0.1"
+    implementation 'androidx.media:media:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.github.oxters168:ShaderView:0.8.12'
+    //implementation project(':shader_view') // for when modifying ShaderView
+    implementation 'de.ruedigermoeller:fst:2.57'
+}
+repositories {
+    mavenCentral()
+}

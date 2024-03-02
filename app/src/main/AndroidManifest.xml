@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- <uses-permission android:name="android.permission.ACTION_MANAGE_OVERLAY_PERMISSION" /> -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="QueryAllPackagesPermission"/> <!-- For android 11+ https://developer.android.com/training/package-visibility -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+<!--    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28"/>
+<!--    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>-->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage"/> <!-- For android 11+ https://developer.android.com/about/versions/11/privacy/storage -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES"/>
+    <uses-permission android:name="android.permission.SET_WALLPAPER" />
+    <!-- for the wake lock in the media player service -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <!-- I believe this defines what kinds of apps we request for QUERY_ALL_PACKAGES -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
+
+    <!-- <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
+    <uses-permission android:name="android.permission.REORDER_TASKS"/>
+    <uses-permission android:name="android.permission.GET_TASKS"/> -->
+
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.software.live_wallpaper"
+        android:required="false" />
+    <uses-feature
+        android:glEsVersion="0x00030002"
+        android:required="false" />
+    <uses-feature
+        android:glEsVersion="0x00030001"
+        android:required="false" />
+    <uses-feature
+        android:glEsVersion="0x00030000"
+        android:required="false" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="false" />
+
+    <application
+        android:allowBackup="true"
+        android:name="com.OxGames.OxShell.OxShellApp"
+        android:icon="${icon}"
+        android:banner="${banner}"
+        android:label="${appLabel}"
+        android:requestLegacyExternalStorage="true"
+        android:resizeableActivity="false"
+        android:roundIcon="${icon}"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.OxShell" >
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+        <service
+            android:name=".AccessService"
+            android:enabled="true"
+            android:label="OxShell"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+        <service
+            android:name=".Wallpaper.GLWallpaperService"
+            android:enabled="true"
+            android:label="Ox Paper"
+            android:permission="android.permission.BIND_WALLPAPER"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/ox_paper" >
+            </meta-data>
+        </service>
+        <service
+            android:name=".Helpers.MediaPlayer"
+            android:foregroundServiceType="mediaPlayback"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService"/>
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name=".ExplorerActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden|screenSize">
+<!--            android:theme="@style/Theme.OxShell">-->
+        </activity>
+        <activity
+            android:name=".FileChooserActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT"/>
+                <action android:name="android.intent.action.OPEN_DOCUMENT"/>
+                <action android:name="android.intent.action.OPEN_DOCUMENT_TREE"/>
+                <category android:name="android.intent.category.OPENABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="*/*"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MediaPlayerActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="content"/>
+                <data android:mimeType="video/*"/>
+                <data android:mimeType="audio/*"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".HomeActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true">
+<!--            android:theme="@style/Theme.OxShell.Fullscreen"> &lt;!&ndash; @android:style/Theme.Holo.NoActionBar.Fullscreen &ndash;&gt;-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
+                <category android:name="android.intent.category.HOME"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
